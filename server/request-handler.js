@@ -11,8 +11,10 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var messages = require('./messages.js').messages;
+var url = require('url');
 
-var requestHandler = function(request, response) {
+exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -27,32 +29,51 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
-  console.log("Serving request type " + request.method + " for url " + request.url);
-
-  // The outgoing status.
-  var statusCode = 200;
-
-  // See the note below about CORS headers.
+  var acceptableUrls = {"/classes/messages": true};
+  var statusCode;
   var headers = defaultCorsHeaders;
+  console.log("Serving request type " + request.method + " for url " + request.url);
+  var query = url.parse(request.url, true).query;
+  var path = url.parse(request.url, true).pathname;
+  console.log(path);
+  console.log(query);
+  if (path !== "/classes/messages") {
+    response.writeHead(404, headers);
+    console.log("404");
+    response.end('Does not exist!');
+  } else {
+    if (request.method === 'GET' || request.method === 'OPTIONS') {
+      statusCode = 200; //outgoing status
+      headers['dataType'] = 'json';
+      getMessages();
+      console.log("inside GET");
+    } if (request.method === 'POST' || request.method === 'PUT') {
+      headers['Content-Type'] = "application/json";
+      if (postMessage(request)) {
+        console.log("message successfully added");
+      } else {
+        console.log("message not added");
+      }
+    }
 
-  // Tell the client we are sending them plain text.
-  //
-  // You will need to change this if you are sending something
-  // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "text/plain";
+    // Tell the client we are sending them plain text.
+    //
+    // You will need to change this if you are sending something
+    // other than plain text, like JSON or HTML.
 
-  // .writeHead() writes to the request line and headers of the response,
-  // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+    // .writeHead() writes to the request line and headers of the response,
+    // which includes the status and all headers.
+    //response.writeHead(statusCode, headers);
 
-  // Make sure to always call response.end() - Node may not send
-  // anything back to the client until you do. The string you pass to
-  // response.end() will be the body of the response - i.e. what shows
-  // up in the browser.
-  //
-  // Calling .end "flushes" the response's internal buffer, forcing
-  // node to actually send all the data over to the client.
-  response.end("Hello, World!");
+    // Make sure to always call response.end() - Node may not send
+    // anything back to the client until you do. The string you pass to
+    // response.end() will be the body of the response - i.e. what shows
+    // up in the browser.
+    //
+    // Calling .end "flushes" the response's internal buffer, forcing
+    // node to actually send all the data over to the client.
+    response.end("Hello, World!");
+  }
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -69,5 +90,19 @@ var defaultCorsHeaders = {
   "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
   "access-control-allow-headers": "content-type, accept",
   "access-control-max-age": 10 // Seconds.
+};
+
+var getMessages = function (url) {
+
+  return;
+};
+
+var postMessage = function (request) {
+  var data = parseJSON(request.data);
+  var username = data['username'];
+  var text = data['text'];
+  var roomname = data['roomname'] || 'lobby';
+  var date = new Date();
+  messages[messages.length + 1] = {'createdAt' : date, 'username': username, 'text': text, 'roomname': roomname};
 };
 
