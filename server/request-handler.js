@@ -13,6 +13,7 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 var messages = require('./messages.js').messages;
 var url = require('url');
+var _ = require('underscore');
 
 exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -29,29 +30,35 @@ exports.requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
-  var acceptableUrls = {"/classes/messages": true};
-  var statusCode;
   var headers = defaultCorsHeaders;
   console.log("Serving request type " + request.method + " for url " + request.url);
+
   var query = url.parse(request.url, true).query;
   var path = url.parse(request.url, true).pathname;
-  console.log(path);
-  console.log(query);
+
+  //Handles
   if (path !== "/classes/messages") {
     response.writeHead(404, headers);
     console.log("404");
     response.end('Does not exist!');
   } else {
     if (request.method === 'GET' || request.method === 'OPTIONS') {
-      statusCode = 200; //outgoing status
       headers['dataType'] = 'json';
-      getMessages();
-      console.log("inside GET");
-    } if (request.method === 'POST' || request.method === 'PUT') {
+      var data = getMessages(query);
+      response.writeHead(200, headers);
+      response.data = data;
+      response.write(JSON.stringify(data), 'utf8');
+      response.end();
+      //  console.log(response);
+    }
+    if (request.method === 'POST' || request.method === 'PUT') {
       headers['Content-Type'] = "application/json";
       if (postMessage(request)) {
+        response.writeHead(201, headers);
+        response.end();
         console.log("message successfully added");
       } else {
+        response.writeHead(400, headers);
         console.log("message not added");
       }
     }
@@ -72,7 +79,7 @@ exports.requestHandler = function(request, response) {
     //
     // Calling .end "flushes" the response's internal buffer, forcing
     // node to actually send all the data over to the client.
-    response.end("Hello, World!");
+    //response.end("Hello, World!");
   }
 };
 
@@ -92,13 +99,19 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
-var getMessages = function (url) {
-
-  return;
+var getMessages = function (query) {
+  var roomname = query['where[roomname]'];
+  var results = [];
+  _.each(messages, function (value, key, messages) {
+    if(value['roomname'] === roomname){
+      results.push(value);
+    }
+  });
+  return {'results': results};
 };
 
 var postMessage = function (request) {
-  var data = parseJSON(request.data);
+  var data = JSON.parse(request.data);
   var username = data['username'];
   var text = data['text'];
   var roomname = data['roomname'] || 'lobby';
