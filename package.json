@@ -1,5 +1,5 @@
 {
-  "name": "chatterbox",
+  "name": "Chatterbox-Server",
   "version": "0.0.1",
   "main": "server/basic-server.js",
   "author": "Hack Reactor",
@@ -11,5 +11,17 @@
     "mocha": "^1.21.4",
     "request": "^2.34.0",
     "chai": "^1.9.0"
+  },
+  "description": "Replaces Parse API endpoint",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nlokare/2014-12-chatterbox-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nlokare/2014-12-chatterbox-server/issues"
+  },
+  "homepage": "https://github.com/nlokare/2014-12-chatterbox-server",
+  "dependencies": {
+    "underscore": "^1.7.0"
   }
 }
