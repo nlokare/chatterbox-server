@@ -4,7 +4,7 @@ var _ = require('underscore');
 var fs = require('fs');
 var Path = require('path');
 
-exports.requestHandler = function(request, response) {
+exports.requestHandler = function (request, response) {
 
   var headers = defaultCorsHeaders;
   console.log("Serving request type " + request.method + " for url " + request.url);
@@ -12,7 +12,7 @@ exports.requestHandler = function(request, response) {
   var query = url.parse(request.url, true).query;
   var path = url.parse(request.url, true).pathname;
 
-  if(path === "/" || path.indexOf("/client") >= 0){
+  if(path === "/" || path.indexOf("client") >= 0){
     app(request, response, path);
   } else {
     if (path !== "/classes/messages" && path !== "/send") {
@@ -36,18 +36,16 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
-var app = function(req, res, filename){
+var app = function (req, res, filename){
   var file;
+
   if(filename === "/"){
     file = Path.resolve(__dirname, '..', 'client/index.html');
-
   } else {
-    // filename = filename.slice(1);
-    file = Path.resolve(__dirname, '..', filename);
+    file = Path.resolve(__dirname, '..') + filename;
   }
-  console.log(file);
-  console.log(__dirname);
-  fs.readFile(file, 'binary', function(error, content) {
+
+  fs.readFile(file, 'binary', function (error, content) {
     if (error) {
       res.writeHead(500);
       res.end();
