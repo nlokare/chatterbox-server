@@ -1,10 +1,15 @@
-var messages = require('./messages.js').messages;
+var messages;// = require('./messages.js').messages;
 var url = require('url');
 var _ = require('underscore');
 var fs = require('fs');
 var Path = require('path');
+var isInit = false;
 
 exports.requestHandler = function (request, response) {
+  if(!isInit){
+    initialize();
+    isInit = true;
+  }
 
   var headers = defaultCorsHeaders;
   console.log("Serving request type " + request.method + " for url " + request.url);
@@ -12,8 +17,8 @@ exports.requestHandler = function (request, response) {
   var query = url.parse(request.url, true).query;
   var path = url.parse(request.url, true).pathname;
 
-  if(path === "/" || path.indexOf("client") >= 0){
-    app(request, response, path);
+  if(path === "/" || path.indexOf("client") >= 0) {
+    app(request, response, path); //serve index.html from '/'
   } else {
     if (path !== "/classes/messages" && path !== "/send") {
       response.writeHead(404, headers);
@@ -57,6 +62,9 @@ var app = function (req, res, filename){
   });
 };
 
+var initialize = function(){
+  messages = JSON.parse(fs.readFileSync('messages.txt'));
+};
 
 var getMessages = function (request, response, headers, query) {
   headers['dataType'] = 'json';
@@ -99,5 +107,12 @@ var postMessage = function (data) {
   var roomname = data['roomname'] || 'lobby';
   var date = new Date();
   messages[Object.keys(messages).length + 1] = {'createdAt' : date, 'username': username, 'text': text, 'roomname': roomname};
+  fs.writeFile('messages.txt', JSON.stringify(messages), 'utf8', function (err) {
+    if (err) {
+      console.log("did not write");
+    } else {
+      console.log("Messages stored to file");
+    }
+  });
 };
 
