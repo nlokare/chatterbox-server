@@ -46,10 +46,8 @@ exports.requestHandler = function(request, response) {
       headers['dataType'] = 'json';
       var data = getMessages(query);
       response.writeHead(200, headers);
-      response.data = data;
       response.write(JSON.stringify(data), 'utf8');
       response.end();
-      //  console.log(response);
     }
     if (request.method === 'POST' || request.method === 'PUT') {
       headers['Content-Type'] = "application/json";
