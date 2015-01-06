@@ -1,16 +1,3 @@
-/*************************************************************
-
-You should implement your request handler function in this file.
-
-requestHandler is already getting passed to http.createServer()
-in basic-server.js, but it won't work as is.
-
-You'll have to figure out a way to export this function from
-this file and include it in basic-server.js so that it actually works.
-
-*Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
-
-**************************************************************/
 var messages = require('./messages.js').messages;
 var url = require('url');
 var _ = require('underscore');
@@ -18,7 +5,7 @@ var _ = require('underscore');
 exports.requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
-  // They include information about both the incoming request, such as
+  // They include information about both the incoming request, such ands
   // headers and URL, and about the outgoing response, such as its status
   // and content.
   //
@@ -37,9 +24,8 @@ exports.requestHandler = function(request, response) {
   var path = url.parse(request.url, true).pathname;
 
   //Handles
-  if (path !== "/classes/messages") {
+  if (path !== "/classes/messages" && path !== "/send" && path !== "/classes/room") {
     response.writeHead(404, headers);
-    console.log("404");
     response.end('Does not exist!');
   } else {
     if (request.method === 'GET' || request.method === 'OPTIONS') {
@@ -51,33 +37,11 @@ exports.requestHandler = function(request, response) {
     }
     if (request.method === 'POST' || request.method === 'PUT') {
       headers['Content-Type'] = "application/json";
-      if (postMessage(request)) {
-        response.writeHead(201, headers);
-        response.end();
-        console.log("message successfully added");
-      } else {
-        response.writeHead(400, headers);
-        console.log("message not added");
-      }
+      parsePost(request, postMessage);
+      response.writeHead(201, headers);
+      response.end();
+      console.log("message successfully added");
     }
-
-    // Tell the client we are sending them plain text.
-    //
-    // You will need to change this if you are sending something
-    // other than plain text, like JSON or HTML.
-
-    // .writeHead() writes to the request line and headers of the response,
-    // which includes the status and all headers.
-    //response.writeHead(statusCode, headers);
-
-    // Make sure to always call response.end() - Node may not send
-    // anything back to the client until you do. The string you pass to
-    // response.end() will be the body of the response - i.e. what shows
-    // up in the browser.
-    //
-    // Calling .end "flushes" the response's internal buffer, forcing
-    // node to actually send all the data over to the client.
-    //response.end("Hello, World!");
   }
 };
 
@@ -108,8 +72,19 @@ var getMessages = function (query) {
   return {'results': results};
 };
 
-var postMessage = function (request) {
-  var data = JSON.parse(request.data);
+var parsePost = function (req, callback) {
+  var data = '';
+  req.on('data', function(chunk) {
+    data += chunk;
+  });
+  req.on('end', function() {
+    callback(data);
+  });
+};
+
+var postMessage = function (data) {
+  console.log("Post: ", data);
+  var data = JSON.parse(data);
   var username = data['username'];
   var text = data['text'];
   var roomname = data['roomname'] || 'lobby';
