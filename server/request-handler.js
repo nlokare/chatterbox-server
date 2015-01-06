@@ -10,20 +10,14 @@ exports.requestHandler = function(request, response) {
   var query = url.parse(request.url, true).query;
   var path = url.parse(request.url, true).pathname;
 
-  //Handles
-  if (path !== "/classes/messages" && path !== "/send" && path !== "/classes/room1") {
+  if (path !== "/classes/messages" && path !== "/send") {
     response.writeHead(404, headers);
     response.end('Does not exist!');
   } else {
     if (request.method === 'GET' || request.method === 'OPTIONS') {
-      headers['dataType'] = 'json';
-      var data = getMessages(query);
-      response.writeHead(200, headers);
-      response.write(JSON.stringify(data), 'utf8');
-      response.end();
+      getMessages(request, response, headers, query);
     }
     if (request.method === 'POST' || request.method === 'PUT') {
-      headers['Content-Type'] = "text/plain";
       parsePost(request, response, headers, postMessage);
     }
   }
@@ -36,24 +30,29 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
-var getMessages = function (query) {
+var getMessages = function (request, response, headers, query) {
+  headers['dataType'] = 'json';
   var roomname = query['where[roomname]'] || 'default';
   var results = [];
   if(roomname === 'default'){
-    _.each(messages, function (value, key, messages) {
+    _.each(messages, function (value) {
       results.push(value);
     });
   } else {
-    _.each(messages, function (value, key, messages) {
+    _.each(messages, function (value) {
       if(value['roomname'] === roomname){
         results.push(value);
       }
     });
   }
-  return {'results': results};
+  var data = {'results': results};
+  response.writeHead(200, headers);
+  response.write(JSON.stringify(data), 'utf8');
+  response.end();
 };
 
 var parsePost = function (req, res, headers, callback) {
+  headers['Content-Type'] = "text/plain";
   var data = '';
   req.on('data', function(chunk) {
     data += chunk;
