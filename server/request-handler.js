@@ -20,16 +20,14 @@ exports.requestHandler = function (request, response) {
   if(path === "/" || path.indexOf("client") >= 0) {
     app(request, response, path); //serve index.html from '/'
   } else {
-    if (path !== "/classes/messages" && path !== "/send") {
-      response.writeHead(404, headers);
-      response.end('Does not exist!');
+    if ((request.method === 'GET' || request.method === 'OPTIONS') && path === '/messages') {
+      getMessages(request, response, headers, query);
+    }
+    if ((request.method === 'POST' || request.method === 'PUT') && path === '/send') {
+      parsePost(request, response, headers, postMessage);
     } else {
-      if (request.method === 'GET' || request.method === 'OPTIONS') {
-        getMessages(request, response, headers, query);
-      }
-      if (request.method === 'POST' || request.method === 'PUT') {
-        parsePost(request, response, headers, postMessage);
-      }
+      response.writeHead(404, headers);
+      response.end("Does not exist");
     }
   }
 };
@@ -41,7 +39,7 @@ var defaultCorsHeaders = {
   "access-control-max-age": 10 // Seconds.
 };
 
-var app = function (req, res, filename){
+var app = function (request, response, filename){
   var file;
 
   if(filename === "/"){
@@ -52,12 +50,12 @@ var app = function (req, res, filename){
 
   fs.readFile(file, 'binary', function (error, content) {
     if (error) {
-      res.writeHead(500);
-      res.end();
+      response.writeHead(500);
+      response.end();
     }
     else {
-      res.writeHead(200, { 'Content-Lenth': content.length });
-      res.end(content);
+      response.writeHead(200, { 'Content-Lenth': content.length });
+      response.end(content);
     }
   });
 };
@@ -87,15 +85,15 @@ var getMessages = function (request, response, headers, query) {
   response.end();
 };
 
-var parsePost = function (req, res, headers, callback) {
+var parsePost = function (request, response, headers, callback) {
   headers['Content-Type'] = "text/plain";
   var data = '';
-  req.on('data', function(chunk) {
+  request.on('data', function(chunk) {
     data += chunk;
   });
-  req.on('end', function() {
-    res.writeHead(201, headers);
-    res.end();
+  request.on('end', function() {
+    response.writeHead(201, headers);
+    response.end();
     callback(data);
   });
 };

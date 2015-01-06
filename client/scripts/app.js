@@ -8,7 +8,6 @@ app.init = function () {
   app.createDropDown(app.rooms);
   this.fetch(app.room);
   setInterval( function() {
-    // app.rooms = app.getRooms();
     app.fetch(app.room);
     app.createDropDown(app.rooms);
   }, 500);
@@ -16,7 +15,7 @@ app.init = function () {
 
 app.fetch = function (room) {
   $.ajax({
-    url: app.server + 'classes/messages',
+    url: app.server + 'messages',
     type: 'GET',
     data: {
       order: "-createdAt",
@@ -33,7 +32,7 @@ app.fetch = function (room) {
 app.getRooms = function () {
   var rooms = {};
   $.ajax({
-    url: app.server + 'classes/messages',
+    url: app.server + 'messages',
     type: 'GET',
     data: {
       order: "-createdAt",
@@ -67,14 +66,9 @@ app.send = function (message) {
     contentType: 'application/json',
     success: function (data) {
       console.log('Successfully added');
-      console.log(data);
     },
     error: function (data) {
-      console.log(data);
       console.log('Unsuccessful');
-    },
-    complete: function() {
-      app.addMessage(message);
     }
   });
 };
@@ -86,18 +80,17 @@ app.addMessage = function (message) {
 
 app.displayMessages = function () {
   app.clearMessages();
-  var elements = [];
-  console.log(app);
+  var element;
   for (var i = 0; i < app.messages.length; i++) {
     if (app.messages[i]['username'] !== undefined) {
       if (app.friends.indexOf(app.messages[i]['username']) > -1) {
-        elements.push("<li class='list-group-item friend'>" + "<strong class='username'>" + app.escapeHtml(app.messages[i]['username']) + "</strong>: " + app.escapeHtml(app.messages[i]['text']) + "</li>");
+        element = "<li class='list-group-item friend'>" + "<strong class='username'>" + app.escapeHtml(app.messages[i]['username']) + "</strong>: " + app.escapeHtml(app.messages[i]['text']) + "</li>";
       } else {
-        elements.push("<li class='list-group-item'>" + "<strong class='username'>" + app.escapeHtml(app.messages[i]['username']) + "</strong>: " + app.escapeHtml(app.messages[i]['text']) + "</li>");
+        element = "<li class='list-group-item'>" + "<strong class='username'>" + app.escapeHtml(app.messages[i]['username']) + "</strong>: " + app.escapeHtml(app.messages[i]['text']) + "</li>";
       }
     }
+  $('ul#chats').prepend(element);
   }
-  $('ul#chats').append(elements.join(''));
 };
 
 app.createDropDown = function (rooms) {
