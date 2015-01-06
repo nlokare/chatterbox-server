@@ -11,7 +11,7 @@ exports.requestHandler = function(request, response) {
   var path = url.parse(request.url, true).pathname;
 
   //Handles
-  if (path !== "/classes/messages" && path !== "/send" && path !== "/classes/room") {
+  if (path !== "/classes/messages" && path !== "/send" && path !== "/classes/room1") {
     response.writeHead(404, headers);
     response.end('Does not exist!');
   } else {
@@ -25,7 +25,6 @@ exports.requestHandler = function(request, response) {
     if (request.method === 'POST' || request.method === 'PUT') {
       headers['Content-Type'] = "text/plain";
       parsePost(request, response, headers, postMessage);
-      console.log("message successfully added");
     }
   }
 };
@@ -38,13 +37,19 @@ var defaultCorsHeaders = {
 };
 
 var getMessages = function (query) {
-  var roomname = query['where[roomname]'];
+  var roomname = query['where[roomname]'] || 'default';
   var results = [];
-  _.each(messages, function (value, key, messages) {
-    if(value['roomname'] === roomname){
+  if(roomname === 'default'){
+    _.each(messages, function (value, key, messages) {
       results.push(value);
-    }
-  });
+    });
+  } else {
+    _.each(messages, function (value, key, messages) {
+      if(value['roomname'] === roomname){
+        results.push(value);
+      }
+    });
+  }
   return {'results': results};
 };
 
@@ -61,7 +66,6 @@ var parsePost = function (req, res, headers, callback) {
 };
 
 var postMessage = function (data) {
-  console.log("Post: ", data);
   var data = JSON.parse(data);
   var username = data['username'];
   var text = data['text'];
