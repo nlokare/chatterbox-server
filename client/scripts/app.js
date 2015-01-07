@@ -1,6 +1,6 @@
 var app = {};
 app.room = 'HackReactor';
-app.server = 'http://127.0.0.1:3000/';
+app.server = 'http://nzchat.azurewebsites.net/';
 app.friends = [];
 
 app.init = function () {
