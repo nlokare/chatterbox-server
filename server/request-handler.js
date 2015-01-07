@@ -5,9 +5,17 @@ var fs = require('fs');
 var Path = require('path');
 var isInit = false;
 
+var defaultCorsHeaders = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "access-control-allow-headers": "content-type, accept",
+  "access-control-max-age": 10
+};
+
 exports.requestHandler = function (request, response) {
   if(!isInit){
     initialize();
+    console.log("Server is started");
     isInit = true;
   }
 
@@ -20,11 +28,15 @@ exports.requestHandler = function (request, response) {
   if(path === "/" || path.indexOf("client") >= 0) {
     app(request, response, path); //serve index.html from '/'
   } else {
-    if ((request.method === 'GET' || request.method === 'OPTIONS') && path === '/messages') {
+    if (request.method === 'GET' && path === '/messages') {
       getMessages(request, response, headers, query);
     }
     if ((request.method === 'POST' || request.method === 'PUT') && path === '/send') {
       parsePost(request, response, headers, postMessage);
+    }
+    if (request.method === 'OPTIONS') {
+      response.writeHead(200, headers);
+      response.end();
     } else {
       response.writeHead(404, headers);
       response.end("Does not exist");
@@ -32,14 +44,8 @@ exports.requestHandler = function (request, response) {
   }
 };
 
-var defaultCorsHeaders = {
-  "access-control-allow-origin": "*",
-  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "access-control-allow-headers": "content-type, accept",
-  "access-control-max-age": 10 // Seconds.
-};
 
-var app = function (request, response, filename){
+var app = function (request, response, filename) {
   var file;
 
   if(filename === "/"){
@@ -52,8 +58,7 @@ var app = function (request, response, filename){
     if (error) {
       response.writeHead(500);
       response.end();
-    }
-    else {
+    } else {
       response.writeHead(200, { 'Content-Lenth': content.length });
       response.end(content);
     }

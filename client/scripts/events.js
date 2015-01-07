@@ -30,6 +30,15 @@ $(document).ready(function () {
     $('h1').text(app.room);
   });
 
+  $('body').on('click', ".setroomname", function (e) {
+    e.preventDefault();
+    app.room = $('.roomname').val();
+    app.fetch(app.room);
+    app.rooms[app.room] = true;
+    $('h1').text(app.room);
+    $('#myModalRoom').modal('hide');
+  });
+
   $('h1').text(app.room);
 
   $('body').on('click', '.username', function (e) {

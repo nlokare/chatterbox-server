@@ -46,7 +46,7 @@ app.getRooms = function () {
   var roomStorage = function (data) {
 
     for (var key in data) {
-      var roomName = app.escapeHtml(data[key]['roomname']);
+      var roomName = app.escapeHtml(data[key]["roomname"]);
 
       if (rooms[roomName] === undefined) {
         rooms[roomName] = true;
