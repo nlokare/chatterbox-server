@@ -1,5 +1,16 @@
 $(document).ready(function () {
 
+  if (window.username === undefined) {
+    $('#myModal').modal('show');
+  }
+
+  $('body').on('click', '.setname', function (e) {
+    e.preventDefault();
+    var name = $('.myname').val();
+    $('#myModal').modal('hide');
+    window.username = name;
+  });
+
   $('.submit').on('click', app.handleSubmit);
 
   $('.tabber a').click(function (e) {

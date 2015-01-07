@@ -138,7 +138,7 @@ app.escapeRoom = function (string) {
 };
 
 app.handleSubmit = function () {
-  var username = window.location.search.split('=')[1];
+  var username = window.username;
   var text = $('#message').val();
 
   var message = {
