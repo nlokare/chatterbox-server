@@ -84,9 +84,9 @@ app.displayMessages = function () {
   for (var i = 0; i < app.messages.length; i++) {
     if (app.messages[i]['username'] !== undefined) {
       if (app.friends.indexOf(app.messages[i]['username']) > -1) {
-        element = "<li class='list-group-item friend'>" + "<strong class='username'>" + app.escapeHtml(app.messages[i]['username']) + "</strong>: " + app.escapeHtml(app.messages[i]['text']) + "</li>";
+        element = "<li class='list-group-item friend'>" + "<strong class='username'>" + app.escapeHtml(app.messages[i]['username']) + "</strong>: " + app.escapeHtml(app.messages[i]['text']) + '<span class ="time">' + moment(app.messages[i]['createdAt']).fromNow() + "</span></li>";
       } else {
-        element = "<li class='list-group-item'>" + "<strong class='username'>" + app.escapeHtml(app.messages[i]['username']) + "</strong>: " + app.escapeHtml(app.messages[i]['text']) + "</li>";
+        element = "<li class='list-group-item'>" + "<strong class='username'>" + app.escapeHtml(app.messages[i]['username']) + "</strong>: " + app.escapeHtml(app.messages[i]['text']) + '<span class ="time">' + moment(app.messages[i]['createdAt']).fromNow() + "</span></li>";
       }
     }
   $('ul#chats').prepend(element);
@@ -94,7 +94,7 @@ app.displayMessages = function () {
 };
 
 app.createDropDown = function (rooms) {
-  $('#roomMenu').empty();
+  $('.newRoom').siblings().empty();
   var roomNames = [];
   var elements = [];
   for (var key in rooms) {
@@ -103,6 +103,7 @@ app.createDropDown = function (rooms) {
   for (var i = 0; i < roomNames.length; i++) {
     elements.push("<li><a href='#' class='roomName'>" + roomNames[i] + "</a></li>");
   }
+  //elements[0]
   $("#roomMenu").append(elements.join(''));
 };
 
