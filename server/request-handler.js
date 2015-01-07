@@ -1,4 +1,4 @@
-var messages;// = require('./messages.js').messages;
+var messages;
 var url = require('url');
 var _ = require('underscore');
 var fs = require('fs');

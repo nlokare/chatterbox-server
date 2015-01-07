@@ -1,16 +1,11 @@
 {
   "name": "Chatterbox-Server",
-  "version": "1.0",
+  "version": "1.0.0",
   "main": "server/basic-server.js",
   "author": "Neil Lokare and Zachary Lopez",
   "license": "Copyright 2015, Neil Lokare and Zachary Lopez. All rights reserved.",
   "scripts": {
     "start": "node server/basic-server.js"
-  },
-  "devDependencies": {
-    "mocha": "^1.21.4",
-    "request": "^2.34.0",
-    "chai": "^1.9.0"
   },
   "description": "Serving awesome chats since 2015",
   "repository": {
@@ -22,12 +17,9 @@
   },
   "homepage": "https://github.com/zdlopez/chatterbox-server",
   "dependencies": {
-    "router": "^1.0.0-beta.2",
     "underscore": "^1.7.0"
   },
   "subdomain": "nzchat",
   "domains": ["azurewebsites.net"],
   "engines": {"node": "0.10.x"}
-
-
 }
