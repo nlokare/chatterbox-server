@@ -1,7 +1,10 @@
 $(document).ready(function () {
+  $('.changeName').hide();
 
   if (window.username === undefined) {
     $('#myModal').modal('show');
+    $('.submit').hide();
+    $('.changeName').show();
   }
 
   $('body').on('click', '.setname', function (e) {
@@ -9,6 +12,8 @@ $(document).ready(function () {
     var name = $('.myname').val();
     $('#myModal').modal('hide');
     window.username = name;
+    $('.submit').show();
+    $('.changeName').hide();
   });
 
   $('.submit').on('click', app.handleSubmit);
