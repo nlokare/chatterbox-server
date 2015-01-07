@@ -27,14 +27,5 @@ logs
 results
 
 
-### NPM ###
-npm-debug.log
-node_modules
-
-
-### Bower ###
-**/bower_components/
-
-
 ### PhPStorm ###
 .idea/
