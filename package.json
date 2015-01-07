@@ -5,7 +5,7 @@
   "author": "Neil Lokare and Zachary Lopez",
   "license": "Copyright 2015, Neil Lokare and Zachary Lopez. All rights reserved.",
   "scripts": {
-    "start": "node basic-server.js"
+    "start": "node server/basic-server.js"
   },
   "devDependencies": {
     "mocha": "^1.21.4",
