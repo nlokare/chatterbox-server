@@ -10,16 +10,16 @@
   "description": "Serving awesome chats since 2015",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zdlopez/chatterbox-server.git"
+    "url": "https://github.com/nlokare/chatterbox-server.git"
   },
   "bugs": {
-    "url": "https://github.com/zdlopez/chatterbox-server/issues"
+    "url": "https://github.com/nlokare/chatterbox-server/issues"
   },
-  "homepage": "https://github.com/zdlopez/chatterbox-server",
+  "homepage": "https://github.com/nlokare/chatterbox-server",
   "dependencies": {
     "underscore": "^1.7.0"
   },
-  "subdomain": "nzchat",
+  "subdomain": "chatrbox",
   "domains": ["azurewebsites.net"],
   "engines": {"node": "0.10.x"}
 }
